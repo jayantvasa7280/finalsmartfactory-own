@@ -155,7 +155,7 @@ def compute_retrieval_metrics(scores, threshold):
         }
 
     # ✅ filter scores based on threshold
-    scores = [s for s in scores if s >= threshold]
+    scores = [s for s in scores if s is not None and s >= threshold]
 
     if not scores:
         return {

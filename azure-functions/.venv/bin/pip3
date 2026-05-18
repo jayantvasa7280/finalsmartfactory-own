@@ -1,4 +1,4 @@
-#!/home/sigmoid/Smart_Factory_AILLMOps_Platform/azure-functions/.venv/bin/python3
+#!/Users/as-mac-0700/Desktop/finalsmartfactory-own/azure-functions/.venv/bin/python3
 # -*- coding: utf-8 -*-
 import re
 import sys

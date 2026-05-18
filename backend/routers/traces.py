@@ -1,6 +1,7 @@
 import math
 from datetime import datetime, timezone
 from fastapi import APIRouter, HTTPException, Query
+from typing import Optional
 
 # ✅ Read-only containers
 from shared.cosmos import traces_read as traces_container
@@ -92,11 +93,11 @@ def normalize_trace(t: dict) -> dict:
 
 @router.get("")
 def get_all_traces(
-    session_id: str | None = Query(None),
-    user_id: str | None = Query(None),
-    model: str | None = Query(None),
-    provider: str | None = Query(None),
-    application_name: str | None = Query(None),
+    session_id: Optional[str] = Query(None),
+    user_id: Optional[str] = Query(None),
+    model: Optional[str] = Query(None),
+    provider: Optional[str] = Query(None),
+    application_name: Optional[str] = Query(None),
     limit: int = Query(200, ge=1, le=1000),
 ):
     try:

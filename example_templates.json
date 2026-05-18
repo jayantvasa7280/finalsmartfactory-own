@@ -1,0 +1,44 @@
+[
+  {
+    "id": "hallucination_v1",
+    "template_id": "hallucination_v1",
+    "name": "hallucination",
+    "version": "1",
+    "description": "Evaluates groundedness of a response against provided context.",
+    "model": "gpt-4o-mini",
+    "inputs": [
+      "input",
+      "context",
+      "response"
+    ],
+    "template": "You are an AI evaluator checking for hallucinations.\n\n[CONTEXT]\n{{context}}\n\n[USER INPUT]\n{{input}}\n\n[RESPONSE]\n{{response}}\n\nDetermine if the information in the Response is accurately grounded in the Context provided.\n\nScoring Rubric:\n1.0 = Perfectly grounded; all facts in the response are explicitly supported by the context.\n0.7 = Mostly grounded; contains minor unsupported details, but the core message is accurate based on the context.\n0.4 = Significant hallucinations; includes major factual claims that are not present in the context.\n0.0 = Completely ungrounded; contradicts the context or states facts when the context is irrelevant or empty.\n\nFirst, provide 2 lines of reasoning comparing the Response to the Context. Then, on a new line, return the final score in this exact format:\nscore: [value]. Should be under 500 tokens.",
+    "updated_at": "2026-04-15T12:00:00Z"
+  },
+  {
+    "id": "Context_relevance_v1",
+    "template_id": "Context_relevance_v1",
+    "name": "Context Relevance",
+    "version": "1",
+    "description": "A template for evaluating the relevance of retrieved context.",
+    "model": "gpt-4o-mini",
+    "inputs": [
+      "input",
+      "context"
+    ],
+    "template": "You are an AI evaluator assessing the relevance of retrieved context.\n\n[USER INPUT]\n{{input}}\n\n[CONTEXT]\n{{context}}\n\nDetermine how useful and relevant the Context is for accurately answering the User Input.\n\nScoring Rubric:\n1.0 = Highly relevant; contains the exact information needed.\n0.7 = Mostly relevant; contains useful info but includes some noise.\n0.4 = Partially relevant; tangentially related but misses key details.\n0.0 = Completely irrelevant or context is empty.\n\nFirst, provide a 2 line reasoning for your assessment. Then, return the final score in this exact format:\nscore: [value]",
+    "updated_at": "2026-04-15T12:00:00Z"
+  },
+  {
+    "id": "conciseness_v1",
+    "template_id": "conciseness_v1",
+    "name": "Conciseness",
+    "version": "1",
+    "description": "A template for conciseness detection.",
+    "model": "gpt-4o-mini",
+    "inputs": [
+      "response"
+    ],
+    "template": "You are an AI evaluator assessing the conciseness of a chatbot response.\n\n[RESPONSE]\n{{response}}\n\nDetermine if the response is concise, direct, and avoids unnecessary verbosity.\n\nScoring Rubric:\n1.0 = Short and Direct; highly focused (1-2 sentences get high priority).\n0.8 = Minor Filler; mostly concise but contains some conversational filler words.\n0.5 = Extra Info; includes unnecessary information that was not requested.\n0.3 = Repetitive or Verbose; rambling, repeats points, or is unnecessarily long.\n0.0 = Off-topic or Empty.\n\nFirst, provide a 2-line reasoning analyzing the verbosity of the response. Then, return the final score in this exact format:\nscore: [value]. Should be under 500 tokens.",
+    "updated_at": "2026-04-15T12:00:00Z"
+  }
+]

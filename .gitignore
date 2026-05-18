@@ -1,8 +1,9 @@
+
 # Python
 __pycache__/
 *.pyc
 
-
+**/*.venv
 
 # Azure ZIP builds
 *.zip
@@ -24,3 +25,12 @@ backend/.env
 .env
 *.env
 azure-functions/local.settings.json
+example_audit_logs.json
+example_metrics.json
+example_evaluations.json
+example_rca_results.json
+imp_notes.txt
+local_deployment_changes.md
+out-of-context-qa_example.json
+bypass-auth-restore.md
+audit-changes.md

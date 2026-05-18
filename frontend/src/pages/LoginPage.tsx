@@ -8,13 +8,10 @@ export default function LoginPage() {
   const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
 
-  // 👇 FIX: If already logged in → send to dashboard
+  // 👇 FIX: Bypass login completely -> directly send to dashboard
   useEffect(() => {
-    const isLocal = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
-    if (isLocal || accounts.length > 0) {
-      navigate("/dashboard", { replace: true });
-    }
-  }, [accounts, navigate]);
+    navigate("/dashboard", { replace: true });
+  }, [navigate]);
 
   const handleLogin = () => {
     if (inProgress === InteractionStatus.None) {

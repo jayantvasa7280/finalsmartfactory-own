@@ -1,6 +1,7 @@
 import math
 from datetime import datetime, timezone
 from fastapi import APIRouter, HTTPException, Query
+from typing import Optional
 
 from shared.cosmos import evaluations_read, evaluators_read
 
@@ -132,8 +133,8 @@ def normalize_eval(e: dict) -> dict:
 # -----------------------------
 @router.get("")
 def get_all_evaluations(
-    evaluator: str | None = Query(None),
-    trace_id: str | None = Query(None),
+    evaluator: Optional[str] = Query(None),
+    trace_id: Optional[str] = Query(None),
     limit: int = Query(200, ge=1, le=1000),
 ):
 

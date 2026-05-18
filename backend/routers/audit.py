@@ -1,4 +1,5 @@
 from fastapi import APIRouter, HTTPException, Query
+from typing import Optional
 from shared.cosmos import audit_container_read
 
 router = APIRouter(prefix="/audit", tags=["Audit"])
@@ -9,10 +10,10 @@ router = APIRouter(prefix="/audit", tags=["Audit"])
 # ---------------------------------------------------------
 @router.get("")
 def get_audit_logs(
-    type: str | None = Query(None, description="Filter by type (evaluator, template, rca, etc.)"),
-    action: str | None = Query(None, description="Filter by action"),
-    user: str | None = Query(None, description="Filter by user"),
-    search: str | None = Query(None, description="Search in details"),
+    type: Optional[str] = Query(None, description="Filter by type (evaluator, template, rca, etc.)"),
+    action: Optional[str] = Query(None, description="Filter by action"),
+    user: Optional[str] = Query(None, description="Filter by user"),
+    search: Optional[str] = Query(None, description="Search in details"),
     limit: int = Query(200, ge=1, le=1000),
 ):
     try:

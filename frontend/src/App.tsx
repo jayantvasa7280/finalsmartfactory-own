@@ -40,9 +40,7 @@ export default function App() {
         <Route
           path="/*"
           element={
-            <RequireAuth>
-              <ProtectedLayout />
-            </RequireAuth>
+            <ProtectedLayout />
           }
         />
 
