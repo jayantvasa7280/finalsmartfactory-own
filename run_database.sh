@@ -38,7 +38,7 @@ if [ ! -f "$SETTINGS_FILE" ]; then
     "AzureWebJobsStorage": "UseDevelopmentStorage=true",
     "FUNCTIONS_WORKER_RUNTIME": "python",
     "COSMOS_CONN_TRIGGER": "AccountEndpoint=http://localhost:8081/;AccountKey=C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==;",
-    "COSMOS-CONN-WRITE": "AccountEndpoint=http://localhost:8081/;AccountKey=C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==;"
+    "COSMOS_CONN_WRITE": "AccountEndpoint=http://localhost:8081/;AccountKey=C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==;"
   }
 }
 EOT
@@ -90,21 +90,22 @@ for i in {1..30}; do
     sleep 2
 done
 
-# 6. Verify virtual environment in backend/
-cd backend
+# 6. Verify virtual environment in project root
 if [ ! -d ".venv" ]; then
-    echo "Creating Python virtual environment in backend/.venv..."
+    echo "Creating Python virtual environment in .venv..."
     python3 -m venv .venv
     source .venv/bin/activate
-    echo "Installing backend dependencies from requirements.txt..."
+    echo "Installing dependencies from root requirements.txt..."
     pip install --upgrade pip
     pip install -r requirements.txt
 else
-    echo "Backend virtual environment found. Activating..."
+    echo "Project virtual environment found. Activating..."
     source .venv/bin/activate
 fi
 
 # 7. Run database setup and seeding
+cd backend
+
 echo "Running database setup..."
 python setup_db.py
 

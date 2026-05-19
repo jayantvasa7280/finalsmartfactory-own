@@ -11,7 +11,7 @@ def main(mytimer):
     # ==========================================
     # Connect to Cosmos DB
     # ==========================================
-    COSMOS_CONN_WRITE = get_secret("COSMOS-CONN-WRITE")
+    COSMOS_CONN_WRITE = get_secret("COSMOS_CONN_WRITE")
 
     cosmos = CosmosClient.from_connection_string(COSMOS_CONN_WRITE)
     db = cosmos.get_database_client("llmops-data")

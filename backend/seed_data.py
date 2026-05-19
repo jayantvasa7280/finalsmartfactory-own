@@ -4,14 +4,14 @@ from dotenv import load_dotenv
 from azure.cosmos import CosmosClient
 
 load_dotenv("../.env")
-endpoint = os.getenv("COSMOS_ENDPOINT")
-key = os.getenv("COSMOS_KEY")
 
-if not endpoint or not key:
-    print("Error: COSMOS_ENDPOINT or COSMOS_KEY not found in .env")
+conn_str = os.getenv("COSMOS_CONN_WRITE")
+
+if not conn_str:
+    print("Error: COSMOS_CONN_WRITE not found in .env")
     exit(1)
 
-client = CosmosClient(endpoint, credential=key)
+client = CosmosClient.from_connection_string(conn_str)
 db = client.get_database_client("llmops-data")
 
 def seed_container(filepath, container_name):

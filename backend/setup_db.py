@@ -6,8 +6,7 @@ from dotenv import load_dotenv
 load_dotenv()
 os.environ["AZURE_COSMOS_DISABLE_SSL_CERTIFICATE_VALIDATION"] = "True"
 
-# We try to get the connection string from .env, but default to the standard local emulator one
-COSMOS_CONN = os.getenv("COSMOS_CONN_WRITE") or os.getenv("COSMOS-CONN-WRITE")
+COSMOS_CONN = os.getenv("COSMOS_CONN_WRITE")
 
 DATABASE_NAME = "llmops-data"
 

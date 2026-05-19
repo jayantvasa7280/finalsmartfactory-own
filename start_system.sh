@@ -42,19 +42,20 @@ echo "Starting Smart Factory System..."
 echo "========================================================================"
 
 # --- 1. PREPARE BACKEND ---
-echo "Checking FastAPI Backend environment..."
-cd backend
+echo "Checking Python virtual environment in project root..."
 if [ ! -d ".venv" ]; then
-    echo "Creating Python virtual environment in backend/.venv..."
+    echo "Creating Python virtual environment in .venv..."
     python3 -m venv .venv
     source .venv/bin/activate
-    echo "Installing Backend dependencies from requirements.txt..."
+    echo "Installing dependencies from root requirements.txt..."
     pip install --upgrade pip
     pip install -r requirements.txt
 else
-    echo "Backend virtual environment found. Activating..."
+    echo "Project virtual environment found. Activating..."
     source .venv/bin/activate
 fi
+
+cd backend
 echo "Starting FastAPI Backend (Uvicorn) in the background..."
 set -m
 uvicorn main:app --reload &

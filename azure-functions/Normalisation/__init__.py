@@ -14,7 +14,7 @@ def main(documents):
     logging.info(f"Processing {len(documents)} raw traces...")
 
     cosmos = CosmosClient.from_connection_string(
-        get_secret("COSMOS-CONN-WRITE")
+        get_secret("COSMOS_CONN_WRITE")
     )
 
     db = cosmos.get_database_client("llmops-data")

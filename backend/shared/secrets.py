@@ -26,7 +26,7 @@ else:
 # --------------------------------------------------
 # Get Key Vault URI from environment (.env or App Service)
 # --------------------------------------------------
-KEY_VAULT_URI = os.getenv("KEY_VAULT_URI") or os.getenv("KEY-VAULT-URI")
+KEY_VAULT_URI = os.getenv("KEY_VAULT_URI")
 
 if not KEY_VAULT_URI:
     print("WARNING: KEY_VAULT_URI not set in environment or .env file. Falling back to local credentials only.")
@@ -46,8 +46,8 @@ _client = SecretClient(vault_url=KEY_VAULT_URI, credential=_credential)
 
 # Map code-facing secret names to possible .env names
 SECRET_MAP = {
-    "COSMOS-CONN-READ": ["COSMOS_READ_ONLY_KEY_NAME", "COSMOS_CONN_READ"],
-    "COSMOS-CONN-WRITE": ["COSMOS_READ_WRITE_KEY_NAME", "COSMOS_CONN_WRITE"],
+    "COSMOS_CONN_READ": ["COSMOS_READ_ONLY_KEY_NAME", "COSMOS_CONN_READ"],
+    "COSMOS_CONN_WRITE": ["COSMOS_READ_WRITE_KEY_NAME", "COSMOS_CONN_WRITE"],
 }
 
 def get_secret(name: str) -> str:

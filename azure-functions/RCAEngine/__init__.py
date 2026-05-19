@@ -7,7 +7,7 @@ from .rca_rules import analyze_trace
 
 logger = logging.getLogger("rca_engine")
 
-COSMOS = os.environ["COSMOS-CONN-WRITE"]
+COSMOS = os.environ["COSMOS_CONN_WRITE"]
 client = CosmosClient.from_connection_string(COSMOS)
 
 DB = client.get_database_client("llmops-data")

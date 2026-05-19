@@ -7,43 +7,29 @@ This platform allows operators to capture, monitor, evaluate, and perform root-c
 
 ---
 
-## 2. How to Setup the Project
+## 2. How to setup locally
 
-To run this project locally, you need to set up three separate components: the Frontend, the FastAPI Backend, and the Azure Functions.
+1. git clone repo
+2. copy the contents of .env.example file into the .env file: `cp .env.example .env`
+3. fill in the values in the .env file
+4. change directory to frontend folder: `cd frontend/`
+5. run these commands under it:
+   ```bash
+   npm install 
+   npm install -g azure-functions-core-tools@4 --unsafe-perm true
+   ```
+6. next, come back to the project root and create the python virtual environment and activate it:
+   `python3 -m venv .venv && source .venv/bin/activate`
+7. install the dependencies in it: `pip install -r requirements.txt`
 
-### Prerequisites
-* Node.js (v18 or higher)
-* Python (3.10 or higher)
-* Azure Cosmos DB account
-* Azure OpenAI or Google Gemini API keys
-* Azure Functions Core Tools (`npm i -g azure-functions-core-tools@4 --unsafe-perm true`)
+The setup is done. Now you can run the provided bash scripts:
+1. `bash run_database.sh`: creates the Comosdb Database and azurite docker containers and sets up the database and the containers
+2. `bash start_system.sh`: starts the frontend and the backend.
 
-### Step 1: Environment Variables
-1. Copy the `.env.example` file in the root directory and rename it to `.env`.
-2. Fill in the required credentials, particularly your `COSMOS_CONN_WRITE`, `COSMOS_CONN_READ`, and LLM Provider API keys.
-
-### Step 2: Backend (FastAPI)
-1. Navigate to the backend directory: `cd backend`
-2. Create and activate a virtual environment: 
-   * Mac/Linux: `python3 -m venv .venv && source .venv/bin/activate`
-   * Windows: `python -m venv .venv && .venv\Scripts\activate`
-3. Install dependencies: `pip install -r requirements.txt`
-4. Start the server: `uvicorn main:app --reload`
-   *(Runs on http://localhost:8000)*
-
-### Step 3: Azure Functions (Background Processing)
-1. Open a new terminal and navigate to the functions directory: `cd azure-functions`
-2. Create and activate a virtual environment:
-   * Mac/Linux: `python3 -m venv .venv && source .venv/bin/activate`
-   * Windows: `python -m venv .venv && .venv\Scripts\activate`
-3. Install dependencies: `pip install -r requirements.txt`
-4. Start the functions locally: `func start`
-
-### Step 4: Frontend (React UI)
-1. Open a new terminal and navigate to the frontend directory: `cd frontend`
-2. Install dependencies: `npm install`
-3. Start the Vite development server: `npm run dev`
-   *(Runs on http://localhost:5173)*
+To start the azure functions, run these commands in the terminal of the project root:
+1. `source .venv/bin/activate`
+2. `cd azure-functions/` 
+3. `func start`
 
 ---
 

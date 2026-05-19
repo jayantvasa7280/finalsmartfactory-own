@@ -18,9 +18,12 @@ import {
   ResponsiveContainer,
   BarChart,
   Bar,
+  LineChart,
+  Line,
+  CartesianGrid,
 } from "recharts";
 
-import { api } from "../api/client";
+import { api, type Trace } from "../api/client";
 
 /* ================= KPI Card ================= */
 const KPICard = ({ title, value, subtitle, icon: Icon }: any) => (
@@ -41,17 +44,66 @@ const EmptyState = ({ text }: { text: string }) => (
   </div>
 );
 
+/* ================= Custom Tooltip ================= */
+const CustomTooltip = ({ active, payload, label }: any) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="bg-[#1b202c] border border-gray-800 rounded-lg p-3 shadow-xl text-xs">
+        <p className="text-gray-400 font-medium mb-1">{label}</p>
+        <p className="font-bold text-teal-400">
+          {payload[0].value} {payload[0].value === 1 ? "Active User" : "Active Users"}
+        </p>
+      </div>
+    );
+  }
+  return null;
+};
+
 const Dashboard: React.FC = () => {
   const [metrics, setMetrics] = useState<any>(null);
+  const [traces, setTraces] = useState<Trace[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    api
-      .get("/dashboard/metrics")
-      .then((res) => setMetrics(res.data))
-      .catch(() => setMetrics(null))
+    const fetchMetrics = api.get("/dashboard/metrics").then((res) => res.data).catch(() => null);
+    const fetchTraces = api.get("/traces?limit=1000").then((res) => res.data).catch(() => []);
+
+    Promise.all([fetchMetrics, fetchTraces])
+      .then(([metricsData, tracesData]) => {
+        setMetrics(metricsData);
+        setTraces(tracesData);
+      })
+      .catch(() => {
+        setMetrics(null);
+        setTraces([]);
+      })
       .finally(() => setLoading(false));
   }, []);
+
+  const dailyActiveUsersData = React.useMemo(() => {
+    if (!traces || traces.length === 0) return [];
+
+    const usersByDate: Record<string, Set<string>> = {};
+
+    traces.forEach((t) => {
+      if (t.timestamp) {
+        const date = t.timestamp.substring(0, 10);
+        if (t.user_id) {
+          if (!usersByDate[date]) {
+            usersByDate[date] = new Set<string>();
+          }
+          usersByDate[date].add(t.user_id);
+        }
+      }
+    });
+
+    return Object.entries(usersByDate)
+      .map(([date, userSet]) => ({
+        date,
+        users: userSet.size,
+      }))
+      .sort((a, b) => a.date.localeCompare(b.date));
+  }, [traces]);
 
   if (loading) {
     return <div className="p-6 text-gray-400">Loading dashboard…</div>;
@@ -149,7 +201,40 @@ const Dashboard: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="bg-[#161a23] border border-gray-800 rounded-xl p-6">
           <h3 className="font-bold mb-4">Daily Active Users</h3>
-          <EmptyState text="Insufficient data to display time-series metrics" />
+          {dailyActiveUsersData.length > 0 ? (
+            <ResponsiveContainer height={260}>
+              <LineChart data={dailyActiveUsersData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                <CartesianGrid stroke="#1f2937" strokeDasharray="3 3" vertical={false} />
+                <XAxis 
+                  dataKey="date" 
+                  stroke="#9ca3af" 
+                  fontSize={11} 
+                  tickLine={false} 
+                  axisLine={false}
+                  dy={10}
+                />
+                <YAxis 
+                  stroke="#9ca3af" 
+                  fontSize={11} 
+                  tickLine={false} 
+                  axisLine={false}
+                  allowDecimals={false}
+                  dx={-5}
+                />
+                <Tooltip content={<CustomTooltip />} />
+                <Line 
+                  type="monotone" 
+                  dataKey="users" 
+                  stroke="#2dd4bf" 
+                  strokeWidth={3} 
+                  dot={{ r: 4, stroke: "#161a23", strokeWidth: 1, fill: "#2dd4bf" }}
+                  activeDot={{ r: 6, stroke: "#161a23", strokeWidth: 2, fill: "#2dd4bf" }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          ) : (
+            <EmptyState text="Insufficient data to display time-series metrics" />
+          )}
         </div>
 
         <div className="bg-[#161a23] border border-gray-800 rounded-xl p-6">

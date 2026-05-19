@@ -7,11 +7,14 @@ from dotenv import load_dotenv
 # Load variables from project root
 load_dotenv("../.env")
 
-endpoint = os.getenv("COSMOS_ENDPOINT")
-key = os.getenv("COSMOS_KEY")
+conn_str = os.getenv("COSMOS_CONN_WRITE")
+
+if not conn_str:
+    print("Error: COSMOS_CONN_WRITE not found in .env")
+    sys.exit(1)
 
 print("\nConnecting to local Cosmos DB...")
-client = CosmosClient(endpoint, credential=key)
+client = CosmosClient.from_connection_string(conn_str)
 
 try:
     db = client.get_database_client("llmops-data")

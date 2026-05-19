@@ -527,18 +527,18 @@ export default function TraceDetails() {
 
                 </div>
 
-                <div className="bg-[#161a23] border border-[#1e2330] p-4 text-sm font-mono">
+                <div className="bg-[#161a23] border border-[#1e2330] p-4 text-sm font-mono rounded-lg overflow-hidden">
 
                     {activeTab === "input" && (
-                        <pre>{JSON.stringify(trace.input, null, 2)}</pre>
+                        <pre className="whitespace-pre-wrap break-words max-w-full">{JSON.stringify(trace.input, null, 2)}</pre>
                     )}
 
                     {activeTab === "output" && (
-                        <pre>{JSON.stringify(trace.output, null, 2)}</pre>
+                        <pre className="whitespace-pre-wrap break-words max-w-full">{JSON.stringify(trace.output, null, 2)}</pre>
                     )}
 
                     {activeTab === "metadata" && (
-                        <pre>
+                        <pre className="whitespace-pre-wrap break-words max-w-full">
                             {JSON.stringify(
                                 {
                                     session: trace.session_id,

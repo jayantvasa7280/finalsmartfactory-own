@@ -2,7 +2,8 @@ from typing import Optional, Dict, Any
 import logging
 import time
 import os
-import google.generativeai as genai
+from google import genai
+from google.genai import types
 from openai import AzureOpenAI
 from shared.secrets import get_secret
 
@@ -12,12 +13,13 @@ from shared.secrets import get_secret
 # ----------------------------------------------------
 
 LLM_PROVIDER = os.getenv("LLM_PROVIDER", "azure").lower()
+gemini_client = None
 
 # Check if we should use Gemini (either explicitly or if Azure secrets are missing)
 if LLM_PROVIDER == "gemini" or not os.getenv("AZURE_OPENAI_KEY"):
     GEMINI_API_KEY = get_secret("GOOGLE_API_KEY")
     if GEMINI_API_KEY and not GEMINI_API_KEY.startswith("dummy-"):
-        genai.configure(api_key=GEMINI_API_KEY, transport='rest')
+        gemini_client = genai.Client(api_key=GEMINI_API_KEY)
         LLM_PROVIDER = "gemini"
         client = None
         print("DEBUG: Initialized Gemini Provider")
@@ -27,8 +29,8 @@ if LLM_PROVIDER == "gemini" or not os.getenv("AZURE_OPENAI_KEY"):
 
 if LLM_PROVIDER == "azure":
     try:
-        AZURE_OPENAI_ENDPOINT = get_secret("AZURE-OPENAI-ENDPOINT")
-        AZURE_OPENAI_KEY = get_secret("AZURE-OPENAI-KEY")
+        AZURE_OPENAI_ENDPOINT = get_secret("AZURE_OPENAI_ENDPOINT")
+        AZURE_OPENAI_KEY = get_secret("AZURE_OPENAI_KEY")
 
         client = AzureOpenAI(
             api_key=AZURE_OPENAI_KEY,
@@ -129,11 +131,11 @@ def call_llm(
                          gemini_model_name += "-it"
                 
                 try:
-                    logging.info(f"[llm:gemini] Calling {gemini_model_name} (REST transport)")
-                    genai_model = genai.GenerativeModel(gemini_model_name)
-                    response = genai_model.generate_content(
-                        prompt,
-                        generation_config=genai.types.GenerationConfig(
+                    logging.info(f"[llm:gemini] Calling {gemini_model_name}")
+                    response = gemini_client.models.generate_content(
+                        model=gemini_model_name,
+                        contents=prompt,
+                        config=types.GenerateContentConfig(
                             temperature=temperature,
                             max_output_tokens=max_tokens,
                         )
@@ -142,20 +144,13 @@ def call_llm(
                     # Reraise to be caught by the retry loop (handling 429s etc)
                     raise e
                 
-                content = ""
-                if response.candidates:
-                    candidate = response.candidates[0]
-                    if candidate.content and candidate.content.parts:
-                        content = candidate.text
-                    else:
-                        logging.warning(f"[llm:gemini] No text in candidate 0. Finish reason: {candidate.finish_reason}")
-                        content = f"Failure: {candidate.finish_reason}"
-                else:
-                    logging.error(f"[llm:gemini] No candidates in response. Likely blocked by safety filters.")
-                    content = "Error: Blocked by safety filters"
+                content = response.text
+                if not content:
+                    logging.error(f"[llm:gemini] No text in response.")
+                    content = "Error: Blocked by safety filters or empty response"
                 
-                prompt_tokens = response.usage_metadata.prompt_token_count
-                completion_tokens = response.usage_metadata.candidates_token_count
+                prompt_tokens = response.usage_metadata.prompt_token_count if hasattr(response, 'usage_metadata') and response.usage_metadata else 0
+                completion_tokens = response.usage_metadata.candidates_token_count if hasattr(response, 'usage_metadata') and response.usage_metadata else 0
                 
             else:
                 response = client.chat.completions.create(

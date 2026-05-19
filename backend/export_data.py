@@ -5,14 +5,13 @@ from azure.cosmos import CosmosClient
 
 # Load variables from project root
 load_dotenv("../.env")
-endpoint = os.getenv("COSMOS_ENDPOINT")
-key = os.getenv("COSMOS_KEY")
+conn_str = os.getenv("COSMOS_CONN_WRITE")
 
-if not endpoint or not key:
-    print("Error: COSMOS_ENDPOINT or COSMOS_KEY not found in .env")
+if not conn_str:
+    print("Error: COSMOS_CONN_WRITE not found in .env")
     exit(1)
 
-client = CosmosClient(endpoint, credential=key)
+client = CosmosClient.from_connection_string(conn_str)
 db = client.get_database_client("llmops-data")
 
 containers_to_export = [

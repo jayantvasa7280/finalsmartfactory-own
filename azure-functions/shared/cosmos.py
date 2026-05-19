@@ -21,8 +21,8 @@ load_dotenv()
 COSMOS_DB = "llmops-data"  # static db name
 
 print("DEBUG: Fetching Cosmos DB connection strings...")
-COSMOS_CONN_READ = os.getenv("COSMOS_CONN_READ") or os.getenv("COSMOS-CONN-READ")
-COSMOS_CONN_WRITE = os.getenv("COSMOS_CONN_WRITE") or os.getenv("COSMOS-CONN-WRITE")
+COSMOS_CONN_READ = os.getenv("COSMOS_CONN_READ")
+COSMOS_CONN_WRITE = os.getenv("COSMOS_CONN_WRITE")
 print("DEBUG: Successfully fetched Cosmos DB connection strings")
 
 

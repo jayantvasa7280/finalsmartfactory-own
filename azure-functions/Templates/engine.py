@@ -4,8 +4,8 @@ from typing import Optional
 from jinja2 import Template
 
 from shared.cosmos import DB_READ
-from shared.llm import call_llm, client, LLM_PROVIDER
-import google.generativeai as genai
+from shared.llm import call_llm, client, LLM_PROVIDER, gemini_client
+from google.genai import types
 
 
 # ----------------------------------------------------
@@ -123,12 +123,12 @@ def get_embedding(text: str, model: str = "text-embedding-3-small") -> list:
     try:
         if LLM_PROVIDER == "gemini":
             try:
-                result = genai.embed_content(
-                    model="models/gemini-embedding-001",
-                    content=text,
-                    task_type="retrieval_document"
+                response = gemini_client.models.embed_content(
+                    model="text-embedding-004",
+                    contents=text,
+                    config=types.EmbedContentConfig(task_type="RETRIEVAL_DOCUMENT")
                 )
-                embedding = result['embedding']
+                embedding = response.embeddings[0].values
             except Exception as e:
                 logging.error(f"[engine] Gemini embedding failed: {e}")
                 return []
