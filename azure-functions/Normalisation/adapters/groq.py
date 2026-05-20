@@ -65,7 +65,9 @@ class GroqAdapter(BaseProviderAdapter):
         retrieval_span = None
 
         for span in raw.get("spans", []):
-            if span.get("type") == "retrieval":
+            span_type = span.get("type")
+            span_name = span.get("name")
+            if span_type == "retrieval" or span_name == "vector-search":
                 retrieval_span = span
                 break
 
@@ -118,6 +120,11 @@ class GroqAdapter(BaseProviderAdapter):
             context_tokens = meta.get("context_tokens")
 
             span_type = str(span.get("type", "unknown"))
+            span_name = str(span.get("name", "unknown"))
+            
+            # Fallback to identify retrieval type by name
+            if span_type == "unknown" and span_name == "vector-search":
+                span_type = "retrieval"
 
             # Calculate cost for all spans with tokens
             cost = calculate_span_cost(model, prompt, completion)
@@ -156,7 +163,9 @@ class GroqAdapter(BaseProviderAdapter):
 
         for span in raw.get("spans", []):
 
-            if span.get("type") != "retrieval":
+            span_type = span.get("type")
+            span_name = span.get("name")
+            if span_type != "retrieval" and span_name != "vector-search":
                 continue
 
             meta = span.get("metadata", {}) or {}
